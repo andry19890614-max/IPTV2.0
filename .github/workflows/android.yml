@@ -1,41 +1,10 @@
-name: Build APK
+name: test
 
 on:
 workflow_dispatch:
 
 jobs:
-build:
+test:
 runs-on: ubuntu-latest
-
-```
 steps:
-  - uses: actions/checkout@v3
-
-  - uses: actions/setup-node@v3
-    with:
-      node-version: '18'
-
-  - run: npm install || echo "skip"
-
-  - run: npm run build || echo "skip"
-
-  - run: npm install @capacitor/core @capacitor/cli || echo "skip"
-
-  - run: npx cap init app com.app.test || true
-  - run: npx cap add android || true
-  - run: npx cap sync || true
-
-  - uses: actions/setup-java@v3
-    with:
-      distribution: 'temurin'
-      java-version: '17'
-
-  - run: chmod +x android/gradlew || true
-
-  - run: cd android && ./gradlew assembleDebug || echo "gradle skip"
-
-  - uses: actions/upload-artifact@v3
-    with:
-      name: apk
-      path: android/app/build/outputs/apk/debug/app-debug.apk
-```
+- run: echo hello
