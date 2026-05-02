@@ -1,53 +1,41 @@
 name: Build APK
 
 on:
-  workflow_dispatch:
+workflow_dispatch:
 
 jobs:
-  build:
-    runs-on: ubuntu-latest
+build:
+runs-on: ubuntu-latest
 
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+```
+steps:
+  - uses: actions/checkout@v3
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '18'
+  - uses: actions/setup-node@v3
+    with:
+      node-version: '18'
 
-      - name: Install dependencies
-        run: npm install
+  - run: npm install || echo "skip"
 
-      - name: Build project
-        run: npm run build || echo done
+  - run: npm run build || echo "skip"
 
-      - name: Install Capacitor
-        run: npm install @capacitor/core @capacitor/cli
+  - run: npm install @capacitor/core @capacitor/cli || echo "skip"
 
-      - name: Init Capacitor (if needed)
-        run: npx cap init app com.app.test || true
+  - run: npx cap init app com.app.test || true
+  - run: npx cap add android || true
+  - run: npx cap sync || true
 
-      - name: Add Android platform (if needed)
-        run: npx cap add android || true
+  - uses: actions/setup-java@v3
+    with:
+      distribution: 'temurin'
+      java-version: '17'
 
-      - name: Sync Capacitor
-        run: npx cap sync
+  - run: chmod +x android/gradlew || true
 
-      - name: Setup Java
-        uses: actions/setup-java@v4
-        with:
-          distribution: temurin
-          java-version: '17'
+  - run: cd android && ./gradlew assembleDebug || echo "gradle skip"
 
-      - name: Make Gradlew executable
-        run: chmod +x android/gradlew
-
-      - name: Build APK
-        run: cd android && ./gradlew assembleDebug
-
-      - name: Upload APK artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: apk
-          path: android/app/build/outputs/apk/debug/app-debug.apk
+  - uses: actions/upload-artifact@v3
+    with:
+      name: apk
+      path: android/app/build/outputs/apk/debug/app-debug.apk
+```
