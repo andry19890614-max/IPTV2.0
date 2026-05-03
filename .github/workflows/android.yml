@@ -1,37 +1,48 @@
 name: Build APK
 
 on:
-  workflow_dispatch:
+workflow_dispatch:
 
 jobs:
-  build:
-    runs-on: ubuntu-latest
+build:
+runs-on: ubuntu-latest
 
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+```
+steps:
+  - name: Checkout
+    uses: actions/checkout@v4
 
-      - name: Install Gradle
-        run: sudo apt update && sudo apt install -y gradle
+  # 🔥 Ставимо Java
+  - name: Setup Java
+    uses: actions/setup-java@v4
+    with:
+      distribution: temurin
+      java-version: 17
+      cache: gradle
 
-      - name: Generate Gradle Wrapper
-        run: gradle wrapper --gradle-version 8.7
+  # 🔥 Завантажуємо нормальний Gradle 8.7 і генеруємо wrapper
+  - name: Generate Gradle Wrapper
+    run: |
+      curl -L https://services.gradle.org/distributions/gradle-8.7-bin.zip -o gradle.zip
+      unzip -q gradle.zip
+      ./gradle-8.7/bin/gradle wrapper --gradle-version 8.7
 
-      - name: Make gradlew executable
-        run: chmod +x ./gradlew
+  # 🔐 Даємо права
+  - name: Make gradlew executable
+    run: chmod +x ./gradlew
 
-      - name: Setup Java
-        uses: actions/setup-java@v4
-        with:
-          distribution: temurin
-          java-version: 17
-          cache: gradle
+  # 🔍 (опціонально, але корисно)
+  - name: Show project structure
+    run: ls -R
 
-      - name: Build APK
-        run: ./gradlew assembleDebug --no-daemon
+  # 🔥 Збірка APK
+  - name: Build APK
+    run: ./gradlew clean assembleDebug --no-daemon
 
-      - name: Upload APK
-        uses: actions/upload-artifact@v4
-        with:
-          name: app-debug
-          path: app/build/outputs/apk/debug/*.apk
+  # 📦 Завантаження APK
+  - name: Upload APK
+    uses: actions/upload-artifact@v4
+    with:
+      name: app-debug
+      path: app/build/outputs/apk/debug/*.apk
+```
