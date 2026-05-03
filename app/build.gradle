@@ -3,7 +3,7 @@ plugins {
 }
 
 android {
-    namespace 'com.iptv.player'
+    namespace "com.iptv.player"
     compileSdk 34
 
     defaultConfig {
@@ -15,8 +15,6 @@ android {
     }
 
     buildTypes {
-        debug {
-        }
         release {
             minifyEnabled false
         }
