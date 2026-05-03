@@ -1,16 +1,25 @@
-buildscript {
-    repositories {
-        google()
-        mavenCentral()
+plugins {
+    id 'com.android.application'
+}
+
+android {
+    namespace "com.iptv.player"
+    compileSdk 34
+
+    defaultConfig {
+        applicationId "com.iptv.player"
+        minSdk 21
+        targetSdk 34
+        versionCode 1
+        versionName "1.0"
     }
-    dependencies {
-        classpath 'com.android.tools.build:gradle:8.2.0'
+
+    buildTypes {
+        release {
+            minifyEnabled false
+        }
     }
 }
 
-allprojects {
-    repositories {
-        google()
-        mavenCentral()
-    }
+dependencies {
 }
