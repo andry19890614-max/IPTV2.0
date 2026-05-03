@@ -9,40 +9,30 @@ runs-on: ubuntu-latest
 
 ```
 steps:
-  - name: Checkout
-    uses: actions/checkout@v4
+  - uses: actions/checkout@v4
 
-  # 🔥 Ставимо Java
-  - name: Setup Java
-    uses: actions/setup-java@v4
+  - uses: actions/setup-java@v4
     with:
       distribution: temurin
       java-version: 17
-      cache: gradle
 
-  # 🔥 Завантажуємо нормальний Gradle 8.7 і генеруємо wrapper
-  - name: Generate Gradle Wrapper
-    run: |
-      curl -L https://services.gradle.org/distributions/gradle-8.7-bin.zip -o gradle.zip
-      unzip -q gradle.zip
-      ./gradle-8.7/bin/gradle wrapper --gradle-version 8.7
+  - name: Download Gradle
+    run: curl -L https://services.gradle.org/distributions/gradle-8.7-bin.zip -o gradle.zip
 
-  # 🔐 Даємо права
-  - name: Make gradlew executable
-    run: chmod +x ./gradlew
+  - name: Unzip Gradle
+    run: unzip -q gradle.zip
 
-  # 🔍 (опціонально, але корисно)
-  - name: Show project structure
-    run: ls -R
+  - name: Generate Wrapper
+    run: ./gradle-8.7/bin/gradle wrapper --gradle-version 8.7
 
-  # 🔥 Збірка APK
-  - name: Build APK
-    run: ./gradlew clean assembleDebug --no-daemon
+  - name: chmod
+    run: chmod +x gradlew
 
-  # 📦 Завантаження APK
-  - name: Upload APK
-    uses: actions/upload-artifact@v4
+  - name: Build
+    run: ./gradlew assembleDebug
+
+  - uses: actions/upload-artifact@v4
     with:
       name: app-debug
-      path: app/build/outputs/apk/debug/*.apk
+      path: app/build/outputs/apk/debug/
 ```
